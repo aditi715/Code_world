@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CivicEase 🏛 — Demo (HTML only)</title>
+  <style>
+    /* --- Base --- */
+    * { box-sizing: border-box; }
+    html,body { height:100%; margin:0; font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial; background:linear-gradient(180deg,#f0f9ff,#e0f2fe); color:#0f172a; }
+    button { cursor:pointer; font-family:inherit; border:0; }
+
+    /* --- Header --- */
+    header { background:#2563eb; color:#fff; padding:1rem 1.5rem; display:flex; justify-content:space-between; align-items:center; box-shadow:0 2px 6px rgba(37,99,235,.25); }
+    header h1 { margin:0; font-size:1.125rem; font-weight:700; display:flex; gap:.5rem; align-items:center; }
+
+    /* --- Hero --- */
+    main { padding:2rem 1rem 4rem; max-width:1100px; margin:0 auto; }
+    .hero { text-align:center; max-width:720px; margin:0 auto 2rem; }
+    .hero h2 { margin:0 0 .5rem; font-size:1.75rem; }
+    .hero p { margin:0 0 1.25rem; color:#475569; }
+    .btn-primary { background:#2563eb; color:#fff; padding:.65rem 1.6rem; border-radius:999px; font-weight:600; box-shadow:0 8px 20px rgba(37,99,235,.15); }
+
+    /* --- Categories --- */
+    .categories { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; max-width:980px; margin:1rem auto 0; }
+    .card { background:#fff; border-radius:14px; padding:1.25rem; box-shadow:0 8px 18px rgba(2,6,23,.06); text-align:center; cursor:pointer; user-select:none; transition:transform .12s,box-shadow .12s; }
+    .card:hover { transform:translateY(-6px); box-shadow:0 14px 30px rgba(2,6,23,.08); }
+    .card .icon { font-size:1.9rem; margin-bottom:.5rem; display:block; }
+    .card h3 { margin:0; font-size:1rem; font-weight:600; color:#0f172a; }
+
+    /* --- Floating open chat button --- */
+    .open-chat-btn { position:fixed; right:1.25rem; bottom:1.25rem; z-index:1200; width:62px; height:62px; border-radius:999px; background:#2563eb; color:#fff; display:flex; align-items:center; justify-content:center; font-size:1.6rem; box-shadow:0 12px 30px rgba(37,99,235,.25); }
+
+    /* --- Chatbot widget --- */
+    .chatbot { position:fixed; right:1.25rem; bottom:1.25rem; width:360px; max-height:76vh; background:#fff; border-radius:14px; box-shadow:0 26px 50px rgba(2,6,23,.18); display:flex; flex-direction:column; overflow:hidden; z-index:1300; transform:translateY(18px); opacity:0; pointer-events:none; }
+    .chatbot[aria-open="true"]{ transform:translateY(0); opacity:1; pointer-events:auto; }
+    .chat-header { background:#2563eb; color:#fff; padding:.75rem 1rem; display:flex; align-items:center; justify-content:space-between; gap:.5rem; }
+    .chat-header h4 { margin:0; font-size:1rem; }
+    .chat-messages { padding:.75rem; display:flex; flex-direction:column; gap:.5rem; overflow:auto; background:linear-gradient(#f9fafb,#fff 60%); flex:1; min-height:160px; }
+    .message { max-width:78%; padding:.5rem .75rem; border-radius:10px; font-size:.92rem; line-height:1.25; white-space:pre-wrap; word-wrap:break-word; }
+    .message.bot { background:#e6f2ff; align-self:flex-start; color:#022c64; }
+    .message.user { background:#d1fae5; align-self:flex-end; color:#064e3b; }
+    .typing { font-size:.85rem; color:#475569; padding:.25rem .5rem; }
+
+    .chat-input { display:flex; gap:.5rem; padding:.6rem; border-top:1px solid #eef2ff; background:#fff; }
+    .chat-input input { flex:1; padding:.6rem .9rem; border:1px solid #e6eefb; border-radius:999px; outline:0; font-size:.95rem; }
+    .chat-input button { background:#2563eb; color:#fff; padding:.5rem .8rem; border-radius:999px; font-weight:700; }
+
+    /* small screens: full width bottom sheet */
+    @media (max-width:520px){
+      .chatbot { right:0; left:0; bottom:0; width:auto; border-radius:14px 14px 0 0; max-height:80vh; }
+      .open-chat-btn { right:16px; bottom:86px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>CivicEase <span aria-hidden>🏛</span></h1>
+    <div>
+      <button id="headerVoiceBtn" class="btn-primary" aria-pressed="false">🎙 Voice</button>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <h2 id="hero-title">Get Government Help — Fast</h2>
+      <p>Ration card, Aadhaar updates, electricity bills and more. Click a service to start the chat.</p>
+      <button id="start-chat-btn" class="btn-primary" aria-controls="chatbot" aria-expanded="false">Start Chat</button>
+    </section>
+
+    <section class="categories" aria-label="Service categories">
+      <div class="card" data-service="Ration Card"><span class="icon">📜</span><h3>Ration Card</h3></div>
+      <div class="card" data-service="Aadhaar"><span class="icon">🆔</span><h3>Aadhaar</h3></div>
+      <div class="card" data-service="Electricity Bills"><span class="icon">💡</span><h3>Electricity Bills</h3></div>
+      <div class="card" data-service="Complaints"><span class="icon">📝</span><h3>Complaints</h3></div>
+      <div class="card" data-service="Schemes"><span class="icon">🎯</span><h3>Schemes</h3></div>
+      <div class="card" data-service="Emergency"><span class="icon">🚨</span><h3>Emergency</h3></div>
+    </section>
+  </main>
+
+  <!-- Floating open chat button -->
+  <button id="open-chat-btn" class="open-chat-btn" aria-controls="chatbot" aria-expanded="false" aria-label="Open chat">💬</button>
+
+  <!-- Chatbot widget (hidden until opened) -->
+  <aside id="chatbot" class="chatbot" role="dialog" aria-modal="true" aria-labelledby="chatbot-title" aria-open="false" hidden>
+    <div class="chat-header">
+      <h4 id="chatbot-title">CivicEase Bot</h4>
+      <div>
+        <button id="minimize-btn" title="Close chat" aria-label="Close chat">✖</button>
+      </div>
+    </div>
+
+    <div class="chat-messages" id="chatbot-messages" aria-live="polite" aria-relevant="additions"></div>
+
+    <div id="typing-indicator" class="typing" style="display:none;padding:.5rem .75rem;">Bot is typing…</div>
+
+    <div class="chat-input" aria-hidden="false">
+      <input id="chat-input" type="text" placeholder="Type your query..." aria-label="Chat input" autocomplete="off" />
+      <button id="send-btn" aria-label="Send message">➤</button>
+    </div>
+  </aside>
+
+  <script>
+    (function(){
+      // Elements
+      const openBtn = document.getElementById('open-chat-btn');
+      const startBtn = document.getElementById('start-chat-btn');
+      const chatbot = document.getElementById('chatbot');
+      const minimizeBtn = document.getElementById('minimize-btn');
+      const messagesEl = document.getElementById('chatbot-messages');
+      const inputEl = document.getElementById('chat-input');
+      const sendBtn = document.getElementById('send-btn');
+      const cards = document.querySelectorAll('.card');
+      const typingIndicator = document.getElementById('typing-indicator');
+
+      // State
+      let isOpen = false;
+      let messages = [
+        { from: 'bot', text: 'Hello! I can help with Aadhaar, Ration Card, Bills, Complaints and Schemes. How can I help you today?' }
+      ];
+
+      // Simple rule-based responses (demo only)
+      const rules = [
+        { match: /aadhaar|aadhar/i, reply: 'For Aadhaar updates: visit the UIDAI portal or I can help list required documents. What specifically do you want to do (update name/address/biometrics)?' },
+        { match: /ration|pds|ration card/i, reply: 'Ration card help: You can apply or check status via the state PDS portal. Tell me your state or if you want the general steps.' },
+        { match: /electric|bill|electricity/i, reply: 'For electricity bills: you can provide your consumer number and I will show the typical steps to check bills or raise a dispute.' },
+        { match: /complaint|grievance|feedback/i, reply: 'To file a complaint, mention the department (electricity/water/police) and a short description. I will prepare a template for you.' },
+        { match: /scheme|yojan/i, reply: 'I can list central/state schemes relevant to you. Tell me if you want central schemes or state-specific schemes.' },
+        { match: /emergenc|police|ambulance|fire/i, reply: 'For emergencies call your local emergency services immediately. Would you like nearby helpline numbers for your state?' }
+      ];
+
+      // Helpers
+      function openChat(prefill) {
+        if (isOpen) return;
+        isOpen = true;
+        chatbot.hidden = false;
+        chatbot.setAttribute('aria-open','true');
+        openBtn.style.display = 'none';
+        startBtn.setAttribute('aria-expanded','true');
+        openBtn.setAttribute('aria-expanded','true');
+        renderMessages();
+        inputEl.focus();
+        if (prefill) {
+          // Prefill user message then send automatically after a small delay
+          setTimeout(() => {
+            addUserMessage(prefill);
+            processUser(prefill);
+          }, 250);
+        }
+      }
+
+      function closeChat() {
+        if (!isOpen) return;
+        isOpen = false;
+        chatbot.hidden = true;
+        chatbot.setAttribute('aria-open','false');
+        openBtn.style.display = 'block';
+        startBtn.setAttribute('aria-expanded','false');
+        openBtn.setAttribute('aria-expanded','false');
+      }
+
+      function renderMessages(){
+        messagesEl.innerHTML = '';
+        messages.forEach(m => {
+          const d = document.createElement('div');
+          d.className = 'message ' + (m.from === 'bot' ? 'bot' : 'user');
+          d.textContent = m.text;
+          messagesEl.appendChild(d);
+        });
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+      }
+
+      function addUserMessage(text){
+        messages.push({from:'user',text});
+        renderMessages();
+      }
+
+      function addBotMessage(text){
+        messages.push({from:'bot',text});
+        renderMessages();
+      }
+
+      function showTyping(state){
+        typingIndicator.style.display = state ? 'block' : 'none';
+      }
+
+      function processUser(text){
+        // Simulate "typing" and rule-match
+        showTyping(true);
+        // small artificial delay to feel natural
+        setTimeout(() => {
+          showTyping(false);
+          // try rules
+          const rule = rules.find(r => r.match.test(text));
+          if (rule) {
+            addBotMessage(rule.reply);
+          } else {
+            // fallback helpful template
+            addBotMessage("I didn't quite catch that. Here are some quick options:\n• Ask about 'Aadhaar' or 'Ration Card'\n• Type 'File complaint' or 'Check bill'\nIf you'd like, type 'help' to see example queries.");
+          }
+        }, 900 + Math.random()*800);
+      }
+
+      // Event bindings
+      openBtn.addEventListener('click', () => openChat());
+      startBtn.addEventListener('click', () => openChat());
+      minimizeBtn.addEventListener('click', closeChat);
+
+      sendBtn.addEventListener('click', () => {
+        const txt = inputEl.value.trim();
+        if (!txt) return;
+        inputEl.value = '';
+        addUserMessage(txt);
+        // process
+        processUser(txt);
+      });
+
+      inputEl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') { e.preventDefault(); sendBtn.click(); }
+      });
+
+      // Category cards: open chat with prefilled query
+      cards.forEach(card => {
+        card.addEventListener('click', (e) => {
+          const svc = card.getAttribute('data-service') || card.innerText;
+          // Open chat and auto-send a contextual message
+          openChat('I need help with ' + svc);
+        });
+      });
+
+      // Keyboard: Escape to close
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && isOpen) closeChat();
+      });
+
+      // Initialize: do not render messages until opened.
+      // BUT keep a copy of initial greeting for when user opens the chat.
+      function renderMessagesOnOpenOnly(){
+        // We already keep messages array; render happens in openChat().
+      }
+
+      renderMessagesOnOpenOnly();
+
+      // Optional: simple voice capture (if user clicks header voice) - demo only
+      const headerVoiceBtn = document.getElementById('headerVoiceBtn');
+      let recognition = null;
+      if ('webkitSpeechRecognition' in window) {
+        recognition = new window.webkitSpeechRecognition();
+        recognition.lang = 'en-IN';
+        recognition.interimResults = false;
+        recognition.onresult = (ev) => {
+          const t = ev.results[0][0].transcript;
+          // open chat and send voice text
+          openChat(t);
+        };
+        recognition.onerror = () => { /* silent fail */ };
+        headerVoiceBtn.addEventListener('click', () => {
+          try {
+            recognition.start();
+            headerVoiceBtn.textContent = 'Listening...';
+            recognition.onend = () => { headerVoiceBtn.textContent = '🎙 Voice'; };
+          } catch(e){ alert('Speech recognition not supported or blocked.'); }
+        });
+      } else {
+        // hide or disable if not supported
+        headerVoiceBtn.addEventListener('click', () => alert('Speech Recognition not supported in this browser.'));
+      }
+
+      // Provide initial greeting only when opened first time:
+      let greeted = false;
+      const originalOpenChat = openChat;
+      openChat = function(prefill){
+        if (!greeted) {
+          // keep initial bot greeting
+          messages = [{ from:'bot', text: 'Hello! I can help with Aadhaar, Ration Card, Bills, Complaints and Schemes. How can I help you today?' }];
+          greeted = true;
+        }
+        originalOpenChat(prefill);
+      };
+
+    })();
+  </script>
+</body>
+</html>
